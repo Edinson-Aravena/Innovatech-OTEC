@@ -14,7 +14,102 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      enrollments: {
+        Row: {
+          amount_clp: number
+          course_id: string
+          created_at: string
+          id: string
+          rut: string
+          user_id: string
+        }
+        Insert: {
+          amount_clp?: number
+          course_id: string
+          created_at?: string
+          id?: string
+          rut: string
+          user_id: string
+        }
+        Update: {
+          amount_clp?: number
+          course_id?: string
+          created_at?: string
+          id?: string
+          rut?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      practical_sessions: {
+        Row: {
+          course_id: string
+          created_at: string
+          id: string
+          scheduled_date: string
+          user_id: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          id?: string
+          scheduled_date: string
+          user_id: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          id?: string
+          scheduled_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          rut: string | null
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          rut?: string | null
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          rut?: string | null
+        }
+        Relationships: []
+      }
+      progress: {
+        Row: {
+          completed_at: string
+          course_id: string
+          id: string
+          unit_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          course_id: string
+          id?: string
+          unit_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          course_id?: string
+          id?: string
+          unit_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
