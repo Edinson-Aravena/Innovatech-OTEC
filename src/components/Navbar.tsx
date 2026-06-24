@@ -1,18 +1,44 @@
 import { Link, useRouter } from "@tanstack/react-router";
-import { ShoppingCart, Zap, LogOut, LayoutDashboard } from "lucide-react";
+import { ShoppingCart, Zap, LogOut, LayoutDashboard, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { CartSheet } from "@/components/CartSheet";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function Navbar() {
   const { items } = useCart();
   const { user } = useAuth();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [isDark, setIsDark] = useState(true);
+
+  useEffect(() => {
+    // Cargar preferencia guardada, si no hay, usar modo oscuro por defecto
+    const saved = localStorage.getItem("theme");
+    const isDarkMode = saved ? saved === "dark" : true; // Por defecto: oscuro
+    setIsDark(isDarkMode);
+
+    if (isDarkMode) {
+      document.documentElement.classList.remove("light");
+    } else {
+      document.documentElement.classList.add("light");
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newIsDark = !isDark;
+    setIsDark(newIsDark);
+    localStorage.setItem("theme", newIsDark ? "dark" : "light");
+
+    if (newIsDark) {
+      document.documentElement.classList.remove("light");
+    } else {
+      document.documentElement.classList.add("light");
+    }
+  };
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -32,12 +58,23 @@ export function Navbar() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
-          <a href="/#cursos" className="hover:text-foreground transition-colors">Cursos</a>
-          <a href="/#nosotros" className="hover:text-foreground transition-colors">Quiénes somos</a>
-          <a href="/#certificacion" className="hover:text-foreground transition-colors">Certificación</a>
+          <Link to="/" className="hover:text-foreground transition-colors">Inicio</Link>
+          <Link to="/courses" className="hover:text-foreground transition-colors">Cursos</Link>
+          <Link to="/about" className="hover:text-foreground transition-colors">Sobre nosotros</Link>
+          <Link to="/contact" className="hover:text-foreground transition-colors">Contacto</Link>
         </nav>
 
         <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            aria-label="Alternar tema"
+            className="btn-glow"
+          >
+            {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </Button>
+
           <Button
             variant="ghost"
             size="icon"

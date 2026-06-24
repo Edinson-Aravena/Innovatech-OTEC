@@ -11,18 +11,31 @@ export function CourseCard({ course }: { course: Course }) {
   return (
     <article className="card-glow group relative rounded-2xl border border-border/60 bg-surface overflow-hidden">
       <div className="relative h-40 bg-cyan-grad overflow-hidden">
-        <div className="absolute inset-0 grid-bg opacity-60" />
+        {course.image ? (
+          <img
+            src={course.image}
+            alt={course.title}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 grid-bg opacity-60" />
+        )}
+        <div className="absolute inset-0 bg-black/30" />
         <div className="absolute top-3 left-3 flex gap-2">
           <Badge className="bg-background/70 text-foreground border-0 backdrop-blur">
             {course.area}
           </Badge>
-          <Badge variant="outline" className="border-background/30 text-neon-foreground bg-background/20 backdrop-blur">
+          <Badge className={`border-0 backdrop-blur font-semibold ${
+            course.level === "Avanzado"   ? "bg-red-500/80 text-white" :
+            course.level === "Intermedio" ? "bg-amber-500/80 text-white" :
+                                           "bg-emerald-500/80 text-white"
+          }`}>
             {course.level}
           </Badge>
         </div>
         {course.certified && (
-          <div className="absolute bottom-3 right-3 flex items-center gap-1 text-xs text-neon-foreground/90 font-medium">
-            <Award className="h-3.5 w-3.5" /> Certificado SENCE
+          <div className="absolute bottom-3 right-3 flex items-center gap-1 text-xs text-white font-medium bg-black/50 backdrop-blur px-2 py-1 rounded-full border border-white/20">
+            <Award className="h-3.5 w-3.5 text-yellow-400" /> Certificado SENCE
           </div>
         )}
       </div>

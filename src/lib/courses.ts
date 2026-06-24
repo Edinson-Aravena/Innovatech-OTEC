@@ -16,6 +16,7 @@ export type Course = {
   description: string;
   certified: boolean;
   practicalSession: boolean;
+  image?: string;
   units: Unit[];
 };
 
@@ -31,6 +32,7 @@ export const COURSES: Course[] = [
     hours: 24,
     certified: true,
     practicalSession: true,
+    image: "http://127.0.0.1:54321/storage/v1/object/public/course-images/endodoncia-avanzada.png",
     description:
       "Domina las técnicas rotatorias modernas, instrumentación niquel-titanio y obturación termoplástica con casos clínicos reales.",
     units: [
@@ -74,6 +76,7 @@ export const COURSES: Course[] = [
     hours: 30,
     certified: true,
     practicalSession: true,
+    image: "http://127.0.0.1:54321/storage/v1/object/public/course-images/implantologia-digital-y-flujo-cad-cam.png",
     description:
       "Aprende el flujo digital completo: escaneo intraoral, planificación guiada y rehabilitación CAD/CAM paso a paso.",
     units: [
@@ -109,6 +112,7 @@ export const COURSES: Course[] = [
     hours: 16,
     certified: true,
     practicalSession: false,
+    image: "http://127.0.0.1:54321/storage/v1/object/public/course-images/bioseguridad-clinica-para-equipos-de-salud.png",
     description:
       "Norma chilena, control de infecciones, EPP y protocolos actualizados para clínicas dentales y centros de salud.",
     units: [
