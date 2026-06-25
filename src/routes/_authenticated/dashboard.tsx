@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { BookOpen, ArrowRight, Trophy, Clock, User, Sparkles } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
+import { useNavigate } from "@tanstack/react-router";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 function Dashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [enrolled, setEnrolled] = useState<string[]>([]);
   const [progressMap, setProgressMap] = useState<Record<string, string[]>>({});
   const [profile, setProfile] = useState<{ full_name: string | null; rut: string | null } | null>(null);
@@ -24,6 +26,9 @@ function Dashboard() {
   useEffect(() => {
     if (!user) return;
     (async () => {
+      const { data: roleData } = await supabase.rpc("get_my_role");
+      if (roleData === "admin") { navigate({ to: "/admin" }); return; }
+
       const [{ data: enr }, { data: prog }, { data: prof }] = await Promise.all([
         supabase.from("enrollments").select("course_id").eq("user_id", user.id),
         supabase.from("progress").select("course_id, unit_id").eq("user_id", user.id),

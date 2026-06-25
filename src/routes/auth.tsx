@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/use-auth";
-import { formatRut, isValidRut, cleanRut } from "@/lib/rut";
+import { formatRut, cleanRut } from "@/lib/rut";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
@@ -67,11 +67,13 @@ function SignInForm() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setBusy(false);
-    if (error) return toast.error(error.message);
+    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) { setBusy(false); return toast.error(error.message); }
     toast.success("¡Bienvenido de vuelta!");
-    navigate({ to: "/dashboard" });
+    const { data: profile } = await supabase
+      .from("profiles").select("role").eq("id", authData.user!.id).maybeSingle();
+    setBusy(false);
+    navigate({ to: profile?.role === "admin" ? "/admin" : "/dashboard" });
   };
 
   return (
@@ -101,11 +103,11 @@ function SignUpForm() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValidRut(rut)) return toast.error("RUT inválido");
+    if (cleanRut(rut).length < 7) return toast.error("RUT inválido — ingresa al menos 7 dígitos");
     if (password.length < 6) return toast.error("La contraseña debe tener al menos 6 caracteres");
 
     setBusy(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -114,7 +116,8 @@ function SignUpForm() {
       },
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(error.message || "Error al crear la cuenta. Intenta de nuevo.");
+    if (!data.user) return toast.error("Este correo ya está registrado. Inicia sesión en vez de crear cuenta.");
     toast.success("Cuenta creada. ¡Bienvenido!");
     navigate({ to: "/dashboard" });
   };
@@ -131,9 +134,10 @@ function SignUpForm() {
           required
           value={rut}
           onChange={(e) => setRut(formatRut(e.target.value))}
-          placeholder="12.345.678-9"
+          placeholder="11.111.111-1"
           className="bg-surface-hi border-border/60"
         />
+        <p className="text-xs text-muted-foreground">Ingresa tu RUT con dígito verificador. Ejemplo: 11.111.111-1</p>
       </div>
       <div className="space-y-2">
         <Label>Email</Label>
